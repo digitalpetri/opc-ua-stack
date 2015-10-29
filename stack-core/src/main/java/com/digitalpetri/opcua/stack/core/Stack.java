@@ -16,6 +16,7 @@
 
 package com.digitalpetri.opcua.stack.core;
 
+import java.net.URLClassLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,9 +25,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.digitalpetri.opcua.stack.core.util.ManifestUtil;
+
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
+
 import org.slf4j.LoggerFactory;
 
 public final class Stack {
@@ -44,6 +47,7 @@ public final class Stack {
     private static ExecutorService EXECUTOR_SERVICE;
     private static ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE;
     private static HashedWheelTimer WHEEL_TIMER;
+    private static ClassLoader DEFAULT_CLASS_LOADER;
 
     /**
      * @return a shared {@link NioEventLoopGroup}.
@@ -169,4 +173,29 @@ public final class Stack {
         }
     }
 
+    /**
+     * Set the default class loader.
+     * A client application may call this method to pass a specific {@link ClassLoader} to the {@link Stack}.
+     * Otherwise the default class loader will be the {@link Stack} class loader.
+     * The method should be called only once before any other stack operation.
+     * Currently only {@link URLClassLoader} and only file:// URLs are supported.
+     * 
+     * @param classLoader the default class loader to be used by the stack.
+     */
+    public static synchronized void setDefaultClassLoader(ClassLoader classLoader) {
+    	DEFAULT_CLASS_LOADER = classLoader;
+    }
+    
+    /**
+     * Get the default class loader.
+     * The stack will use the default {@link ClassLoader} to find and load classes.
+     * 
+     * @return the default class loader to be used by the stack.
+     */
+    public static synchronized ClassLoader getDefaultClassLoader() {
+    	if (DEFAULT_CLASS_LOADER == null) {
+    		DEFAULT_CLASS_LOADER = Stack.class.getClassLoader();
+    	}
+    	return DEFAULT_CLASS_LOADER;
+    }
 }

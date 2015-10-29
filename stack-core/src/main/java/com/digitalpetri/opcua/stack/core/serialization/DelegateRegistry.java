@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.digitalpetri.opcua.stack.core.Stack;
 import com.digitalpetri.opcua.stack.core.StatusCodes;
 import com.digitalpetri.opcua.stack.core.UaSerializationException;
 import com.digitalpetri.opcua.stack.core.types.builtin.NodeId;
@@ -27,6 +28,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.ClassPath;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +128,7 @@ public class DelegateRegistry {
         Logger logger = LoggerFactory.getLogger(DelegateRegistry.class);
 
         try {
-            ClassLoader classLoader = DelegateRegistry.class.getClassLoader();
+            ClassLoader classLoader = Stack.getDefaultClassLoader();
             ClassPath classPath = ClassPath.from(classLoader);
 
             ImmutableSet<ClassPath.ClassInfo> structures =
@@ -139,6 +141,7 @@ public class DelegateRegistry {
                 Class<?> clazz = classInfo.load();
 
                 try {
+                	logger.debug("Loading class: {}", clazz);
                     Class.forName(clazz.getName(), true, classLoader);
                 } catch (Exception e) {
                     logger.error("Error loading class: {}", clazz, e);
