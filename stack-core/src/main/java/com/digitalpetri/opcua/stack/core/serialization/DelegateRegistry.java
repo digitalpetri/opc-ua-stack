@@ -123,16 +123,25 @@ public class DelegateRegistry {
          * Reflect-o-magically find all generated structured and enumerated types and force their static initialization
          * blocks to run, registering their encode/decode methods with the delegate registry.
          */
-        Logger logger = LoggerFactory.getLogger(DelegateRegistry.class);
-
+        final Logger logger = LoggerFactory.getLogger(DelegateRegistry.class);
+        
+        /*
+         * To load all generated structured and enumerated types dynamically, we have to consider Thread Context Classloader 
+         * as it considers explicitly define execution boundaries between the various components running within the container 
+         * like OSGi, Java EE Containers etc
+         */
+        final Thread thread = Thread.currentThread();
+		final ClassLoader contextClassloader = thread.getContextClassLoader();
+		final ClassLoader classLoader = DelegateRegistry.class.getClassLoader();
+		thread.setContextClassLoader(classLoader);
+        
         try {
-            ClassLoader classLoader = DelegateRegistry.class.getClassLoader();
-            ClassPath classPath = ClassPath.from(classLoader);
+            final ClassPath classPath = ClassPath.from(classLoader);
 
-            ImmutableSet<ClassPath.ClassInfo> structures =
+            final ImmutableSet<ClassPath.ClassInfo> structures =
                     classPath.getTopLevelClasses("com.digitalpetri.opcua.stack.core.types.structured");
 
-            ImmutableSet<ClassPath.ClassInfo> enumerations =
+            final ImmutableSet<ClassPath.ClassInfo> enumerations =
                     classPath.getTopLevelClasses("com.digitalpetri.opcua.stack.core.types.enumerated");
 
             Sets.union(structures, enumerations).forEach(classInfo -> {
@@ -146,6 +155,8 @@ public class DelegateRegistry {
             });
         } catch (IOException e) {
             logger.error("Error loading class path.", e);
+        } finally {
+        	thread.setContextClassLoader(contextClassloader);
         }
     }
 
