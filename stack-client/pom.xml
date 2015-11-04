@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>stack-client</artifactId>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -16,6 +17,27 @@
             <artifactId>stack-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jool</artifactId>
+            <version>0.9.6</version>
+        </dependency>
     </dependencies>
+    
+    <build>
+    	<plugins>
+    		<plugin>
+		        <groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <configuration>
+		          <instructions>
+		            <Embed-Dependency>jool</Embed-Dependency>
+		          	<_noee>true</_noee>
+		          </instructions>
+		        </configuration>
+      		</plugin>
+    	</plugins>
+    </build>
 
 </project>

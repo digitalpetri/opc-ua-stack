@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>stack-server</artifactId>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -17,5 +18,20 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    
+    <build>
+    	<plugins>
+    		<plugin>
+		        <groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <configuration>
+		          <instructions>
+		          	<_noee>true</_noee>
+		          </instructions>
+		        </configuration>
+      		</plugin>
+    	</plugins>
+    </build>
 
 </project>
