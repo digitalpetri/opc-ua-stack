@@ -362,8 +362,10 @@ public class UaTcpStackClient implements UaStackClient {
 
         try {
             URI uri = new URI(client.getEndpointUrl()).parseServerAuthority();
-
-            bootstrap.connect(uri.getHost(), uri.getPort()).addListener((ChannelFuture f) -> {
+            int port = uri.getPort();
+            // If no port is set, set default port
+            if(port == -1) port = 4840;
+            bootstrap.connect(uri.getHost(), port).addListener((ChannelFuture f) -> {
                 if (!f.isSuccess()) {
                     handshake.completeExceptionally(f.cause());
                 }
