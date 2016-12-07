@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>stack-core</artifactId>
+    <packaging>bundle</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,5 +67,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
+    <build>
+    	<plugins>
+    		<plugin>
+		        <groupId>org.apache.felix</groupId>
+		        <artifactId>maven-bundle-plugin</artifactId>
+		        <extensions>true</extensions>
+		        <configuration>
+		          <instructions>
+		          	<Embed-Dependency>jool</Embed-Dependency>
+		          	<_noee>true</_noee>
+		          </instructions>
+		        </configuration>
+      		</plugin>
+    	</plugins>
+    </build>
 </project>
